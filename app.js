@@ -1,22 +1,22 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config();
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const cors = require('cors');
 
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 const dataRouter = require('./routes/data');
 
-var app = express();
+const app = express();
 
 //mongoose connection
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
-const mongoDB = "mongodb+srv://arunsankarcm:arunsankarcm@cluster0.xq01nz7.mongodb.net/dashboard?retryWrites=true&w=majority";
-
+const mongoDB =process.env.MONGO;
 main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect(mongoDB);
@@ -30,7 +30,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'build')));
 app.use(cors({
   origin: 'http://localhost:3000' // Allow only the React app to access
 }));
@@ -42,6 +42,10 @@ app.use('/data', dataRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/build/index.html'));
 });
 
 // error handler

@@ -30,7 +30,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'views')));
 app.use(cors({
   origin: 'http://localhost:3000' // Allow only the React app to access
 }));
@@ -45,7 +45,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/build/index.html'));
+  res.sendFile(path.join(__dirname + 'public'));
 });
 
 // error handler
